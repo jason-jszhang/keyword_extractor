@@ -1,0 +1,9 @@
+# page source
+DB_page_source:
+  host: 192.168.3.104
+  port: 37018
+  user: web_data
+  password: Aa123654
+  auth_db_name: web_data
+  db_name: web_data
+  coll_name: page_source

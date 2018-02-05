@@ -1,0 +1,2 @@
+数据导入mongo
+docker run --rm -v /opt/company_keyword:/tmp/dump/company_keyword mongo mongorestore --host 165.227.5.92 --port 37017  -d company_keyword  -u "admin" -p "Aa123654" --authenticationDatabase "admin" /opt/company_keyword/
