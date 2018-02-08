@@ -105,12 +105,15 @@ class KeyphraseExtractor:
 
     @staticmethod
     def _soup_clean(soup):
-        while soup.link:
-            soup.link.extract()
-        while soup.script:
-            soup.script.extract()
-        while soup.style:
-            soup.style.extract()
+        [link.extract() for link in soup.findAll('link')]
+        [script.extract() for script in soup.findAll('script')]
+        [style.extract() for style in soup.findAll('style')]
+        # while soup.link:
+        #     soup.link.extract()
+        # while soup.script:
+        #     soup.script.extract()
+        # while soup.style:
+        #     soup.style.extract()
         raw_content = list(soup.stripped_strings)
         return raw_content
 
