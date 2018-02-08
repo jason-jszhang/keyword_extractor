@@ -8,7 +8,7 @@ import json
 import logging
 import re
 from collections import namedtuple
-from urllib.parse import urlparse, urljoin
+from urllib.parse import urlparse, urlunparse
 
 import aiohttp
 from bs4 import BeautifulSoup
@@ -37,8 +37,9 @@ async def fetch_html_by_home_page(url, timeout=45):
             "User-Agent": "Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/50.0.2661.75 Safari/537.36"
         }
         async with aiohttp.ClientSession() as session:
-            async with session.request('GET', url, headers=headers, timeout=timeout) as resp:
-                text = await resp.text()
+            async with session.request('GET', url, headers=headers, timeout=timeout, encoding='GBK') as resp:
+                # logging.info(resp.text())
+                text = await resp.read()
                 return text
     except Exception as err:
         # with MongoManager(host='45.32.1.194', db='company_keyword') as company_keyword:
@@ -60,7 +61,7 @@ async def fetch_html_by_second_page(url, timeout=45):
         }
         async with aiohttp.ClientSession() as session:
             async with session.request('GET', url, headers=headers, timeout=timeout) as resp:
-                text = await resp.text()
+                text = await resp.read()
                 return text
     except Exception as err:
         logging.error('Error-> {}:{}'.format(url, err))
@@ -128,7 +129,7 @@ async def extract_page(website):
                         basic_content.append(dic_basic)
                         dic_basic = {}
                     else:
-                        dic_basic["url"] = website
+                        dic_basic["url"] = web_url
                         dic_basic["status_code"] = status_code
                         basic_content.append(dic_basic)
                         dic_basic = {}
@@ -178,7 +179,9 @@ def get_url_from_soup(soup, domain, kw):
             # print('not match')
             continue
         # contruct contact url
-        contact_url = urljoin(domain, link_parse_result.path)
+        contact_url = urlunparse((domain_parse_result.scheme, domain_parse_result.netloc,
+                                  link_parse_result.path, link_parse_result.params, link_parse_result.query,
+                                  link_parse_result.fragment))
         break
     return contact_url
 
@@ -202,7 +205,7 @@ if __name__ == '__main__':
     # for element in source_coll.find({"refinery_status": {'$exists': False}}).limit(101):
     # for element in source_coll.find({"refinery_status": 2}):
     company_id = ObjectId('59babb59ef0090ce1bc08b31')  # element["_id"]
-    url = 'http://www.baidu.com'  # element["url"]
+    url = 'http://www.hlgroup-led.com/about.asp'  # element["url"]
     data = {company_id: url}
     websites.append(data)
     logging.debug(websites)
